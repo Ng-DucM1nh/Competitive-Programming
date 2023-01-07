@@ -14,18 +14,9 @@ int main()
     int NUMTEST = 100;
     for (int test=1; test<=NUMTEST; test++){
         ofstream inp("inp.txt");
+        
         // generate data for input
 
         inp.close();
-
-        // compare output
-        system("sol.exe"); system("bf.exe");
-        if (system("fc out.txt ans.txt") == 0){
-            cout << "AC\n";
-        }
-        else{
-            cout << "WA\n";
-            break;
-        }
     }
 }
