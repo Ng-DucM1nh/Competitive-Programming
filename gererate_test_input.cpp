@@ -15,8 +15,7 @@ int main()
     for (int test=1; test<=NUMTEST; test++){
         ofstream inp("inp.txt");
         // generate data for input
-        int x = gen(1, 100);
-        inp << x;
+
         inp.close();
 
         // compare output
