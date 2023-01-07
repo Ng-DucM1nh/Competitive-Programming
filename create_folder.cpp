@@ -4,7 +4,7 @@ using namespace std;
 
 int main()
 {
-    char* directory = "";
+    char* directory = "C:/Users/ACER/Documents/CP/test/PLUS";
     int check = mkdir(directory);
     if (check == 0){
         cout << "Folder created\n";
