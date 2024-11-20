@@ -1,7 +1,7 @@
-// vegnim
-// https://oj.vnoi.info/problem/latgach4
+// https://codeforces.com/contest/222/problem/E
 #include <bits/stdc++.h>
 using namespace std;
+typedef unsigned int ui;
 typedef long long ll;
 typedef unsigned long long ull;
 typedef long double ld;
@@ -12,94 +12,101 @@ typedef pair <ll,ll> pll;
 #define fi first
 #define se second
 #define setpre(n) fixed << setprecision(n)
+#define sz(x) (int)x.size()
+#define all(x) x.begin(), x.end()
 #define task ""
 
-const int MOD = 111539786;
+using matrix = vector <vector <int> >;
 
-using Mttype = ll;
+const int MOD = 1e9+7;
 
-struct Matrix
+int code[(int)'z'+5],m,k,ans;
+matrix a;
+ll n;
+
+void prep()
 {
-    vector <vector <Mttype> > data;
-
-    Matrix() = default;
-
-    Matrix(int r, int c)
-    {
-        data.resize(r, vector <Mttype> (c));
+    int val = 0;
+    for (int i='a'; i<='z'; i++){
+        code[i] = val++;
     }
-
-    Matrix(vector <vector <Mttype> > d)
-    {
-        data = d;
+    for (int i='A'; i<='Z'; i++){
+        code[i] = val++;
     }
+}
 
-    int row()
-    {
-        return data.size();
+void show(const matrix &t)
+{
+    for (int i=0; i<sz(t); i++){
+        for (int j=0; j<sz(t[i]); j++){
+            cout << t[i][j]<<' ';
+        }
+        cout << '\n';
     }
+    cout << '\n';
+}
 
-    int col()
-    {
-        return (row() == 0) ? 0 : data[0].size();
-    }
-
-    Matrix identity(int n)
-    {
-        Matrix ans(n,n);
-        while (n--) ans.data[n][n] = 1;
-        return ans;
-    }
-
-    Matrix operator * (Matrix b)
-    {
-        assert(col() == b.row());
-        Matrix ans(row(), b.col());
-        for (int i=0; i<row(); i++){
-            for (int j=0; j<b.col(); j++){
-                for (int k=0; k<col(); k++){
-                    ans.data[i][j] = (ans.data[i][j] + data[i][k] * b.data[k][j] % MOD) % MOD;
-                }
+matrix operator*(const matrix &a, const matrix &b)
+{
+    assert(sz(a[0]) == sz(b));
+    int m = sz(a), n = sz(b), p = sz(b[0]);
+    matrix ans(m, vector <int> (p));
+    for (int i=0; i<m; i++){
+        for (int j=0; j<p; j++){
+            for (int k=0; k<n; k++){
+                ans[i][j] = (ans[i][j] + (ll)a[i][k] * b[k][j] % MOD) % MOD;
             }
         }
-        return ans;
     }
+    return ans;
+}
 
-    Matrix exp(int p)
-    {
-        assert(row() == col());
-        Matrix base(data);
-        Matrix ans = identity(row());
-        for (; p > 0; p/=2, base = base*base){
-            if (p&1) ans = ans * base;
-        }
-        return ans;
-    }
-};
-
-void solve()
+matrix iden_matrix(int n)
 {
-    int n; cin >> n;
-    Matrix H({
-        {0, 1},
-        {1, 1}
-    });
-    Matrix R1({
-        (vector <Mttype> ){1},
-        (vector <Mttype> ){1}
-    });
-    H = H.exp(n-1);
-    Matrix ans = H * R1;
-    cout << ans.data.back().back();
+    // create identity matrix with size n*n
+    matrix ans(m, vector <int> (n));
+    for (int i=0; i<n; i++){
+        ans[i][i] = 1;
+    }
+    return ans;
+}
+
+matrix matrix_pw(const matrix &a, ll p)
+{
+    matrix ans = iden_matrix(sz(a));
+    matrix base = a;
+    while (p){
+        if (p&1) ans = ans * base;
+        base = base * base;
+        p >>= 1;
+    }
+    return ans;
 }
 
 signed main()
 {
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int t; cin >> t;
-    while (t--){
-        solve();
-        cout << '\n';
+    ios_base::sync_with_stdio(NULL); cin.tie(nullptr);
+    // freopen("inp.txt","r",stdin);
+    prep();
+    cin >> n >> m >> k;
+    a.assign(m, vector <int> (m));
+    for (int i=0; i<m; i++){
+        for (int j=0; j<m; j++){
+            a[i][j] = 1;
+        }
     }
+    while (k--){
+        char x,y; cin >> x >> y;
+        a[code[x]][code[y]] = 0;
+    }
+    matrix dp(1, vector <int> (m, 1)); // dp[1]
+    a = matrix_pw(a, n-1);
+    dp = dp * a;
+    ans = 0;
+    for (int i=0; i<m; i++){
+        ans = ((ll)ans + dp[0][i]) % MOD;
+    }
+    cout << ans;
+    // cout << "\nFINISHED\n";
     return 0;
 }
